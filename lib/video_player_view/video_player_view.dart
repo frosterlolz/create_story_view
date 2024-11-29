@@ -66,7 +66,18 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
     await _controller!.initialize();
     if (!mounted) return;
     setState(() {
+
       _controller!.play();
+    });
+  }
+
+  void _testCallback() {
+    setState(() {
+      _controller!.value = _controller!.value.copyWith(
+        size: Size(_controller!.value.size.height, _controller!.value.size.width),
+        rotationCorrection: 90,
+      );
+      print(_controller!.value.size);
     });
   }
 
@@ -81,7 +92,10 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
             title: const Text('Video viewer'),
-            actions: [IconButton(onPressed: _onRefreshTap, icon: const Icon(Icons.refresh))],
+            actions: [
+              IconButton(onPressed: _testCallback, icon: const Icon(Icons.abc)),
+              IconButton(onPressed: _onRefreshTap, icon: const Icon(Icons.refresh)),
+            ],
             bottom: _controller == null || !_controller!.value.isInitialized
                 ? null
                 : PreferredSize(
@@ -99,10 +113,12 @@ class _VideoPlayerViewState extends State<VideoPlayerView> {
           _ when _isLoading => const Center(child: CircularProgressIndicator()),
           _ when _controller != null && _controller!.value.isInitialized => GestureDetector(
               onTap: _pause,
-              child: AspectRatio(
-                aspectRatio: _controller!.value.aspectRatio,
-                child: VideoPlayer(
-                  _controller!,
+              child: Placeholder(
+                child: AspectRatio(
+                  aspectRatio: _controller!.value.aspectRatio,
+                  child: VideoPlayer(
+                    _controller!,
+                  ),
                 ),
               ),
             ),
